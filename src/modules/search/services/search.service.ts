@@ -10,6 +10,8 @@ export class SearchService<T, U> {
     private _optionsLookup?:LookupFn<T, U>;
     // Field that options are searched & displayed on.
     private _optionsField?:string;
+    // Disables caching of results.
+    private _disableCaching?:boolean;
     // Filters a list of options.
     public optionsFilter:FilterFn<T>;
 
@@ -48,6 +50,14 @@ export class SearchService<T, U> {
         this._optionsField = field;
         // We need to reset otherwise we would now be showing invalid search results.
         this.reset();
+    }
+
+    public get disableCaching():boolean | undefined{
+        return this._disableCaching;
+    }
+
+    public set disableCaching(value:boolean | undefined) {
+        this._disableCaching = value;
     }
 
     // Stores the results of the query.
@@ -126,7 +136,7 @@ export class SearchService<T, U> {
             return callback();
         }
 
-        if (this._resultsCache.hasOwnProperty(this._query)) {
+        if (!this.disableCaching && this._resultsCache.hasOwnProperty(this._query)) {
             // If the query is already cached, make use of it.
             this._results = this._resultsCache[this._query];
 
@@ -164,7 +174,7 @@ export class SearchService<T, U> {
 
     // Updates & caches the new set of results.
     private updateResults(results:T[]):void {
-        this._resultsCache[this._query] = results;
+        if (!this.disableCaching) { this._resultsCache[this._query] = results };
         this._results = results;
     }
 

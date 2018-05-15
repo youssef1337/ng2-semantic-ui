@@ -129,6 +129,11 @@ export class SuiSearch<T> implements AfterViewInit, OnDestroy {
         this.searchService.optionsField = field;
     }
 
+    @Input()
+    public set disableCaching(value:boolean | undefined) {
+        this.searchService.disableCaching = value;
+    }
+
     private _resultFormatter?:(r:T, q:string) => string;
 
     public get resultFormatter():(result:T, query:string) => string {
